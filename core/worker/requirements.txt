@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+aio-pika
+python-dotenv
+httpx
+pydantic-settings
+SQLAlchemy
+asyncpg
+python-docx
+langchain
