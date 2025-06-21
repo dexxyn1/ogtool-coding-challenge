@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_CONNECTION_STRING_OG_TOOL")
+}
+
+model UserSession {
+  id        String  @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  extractionRequests ExtractionRequest[]
+}
+
+model ExtractionRequest {
+  id        String   @id @default(uuid())
+  userSessionId String
+  url String
+  specialInstructions String
+  userSession   UserSession @relation(fields: [userSessionId], references: [id])
+  isCompleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  extractionResults ExtractionResult[]
+}
+
+model ExtractionResult {
+  id        String   @id @default(uuid())
+  extractionRequestId String
+  title String
+  content String
+  contentType String
+  sourceUrl String
+  author String
+  extractionRequest ExtractionRequest @relation(fields: [extractionRequestId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chunks Chunk[]
+}
+
+model Chunk {
+  id        String   @id @default(uuid())
+  extractionResultId String
+  content String
+  orderNumber Int
+  extractionResult ExtractionResult @relation(fields: [extractionResultId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
